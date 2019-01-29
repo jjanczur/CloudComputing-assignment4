@@ -1,0 +1,14 @@
+discussion.txt
+
+Run your programs with different job configurations:
+- Different numbers of iterations or clusters for k-means
+- Different initial placements
+
+Write a few sentences in the file discussion.txt about the configurations you have tried and what you have observed regarding the run time and results of the jobs.
+
+Answer the following questions separately for both programs:
+1. Which steps in your program require communication and synchronization between your workers?
+
+2. What resources are your programs bound by? Memory? CPU? Network? Disk?
+
+3. Could you improve the partitioning of your data to yield better run-time?
