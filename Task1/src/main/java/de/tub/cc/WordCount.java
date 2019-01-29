@@ -8,7 +8,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import de.tub.cc.util.WordCountData;
 import org.apache.flink.util.Collector;
 
 import java.lang.invoke.MethodHandles;
