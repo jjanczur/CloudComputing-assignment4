@@ -6,15 +6,16 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //import de.tub.cc.util.WordCountData;
 import org.apache.flink.util.Collector;
 
+import java.lang.invoke.MethodHandles;
+
 
 public class WordCount {
-
-    // *************************************************************************
-    //     PROGRAM
-    // *************************************************************************
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static void main(String[] args) throws Exception {
 
@@ -33,10 +34,9 @@ public class WordCount {
             text = env.readTextFile(params.get("input"));
         } else {
             // get default test text data
-            System.out.println("Executing WordCount example with default input data set.");
-            System.out.println("Use --input to specify file input.");
+            log.error("Use --input to specify file input.");
             return;
-            //text = WordCountData.getDefaultTextLineDataSet(env);
+            //text = WordCountData.getDefaultTextLineDataSet(env); // use provided dataset
         }
 
         DataSet<Tuple2<String, Integer>> counts =
@@ -48,14 +48,24 @@ public class WordCount {
 
         // emit result
         if (params.has("output")) {
-            counts.sortPartition(0, Order.ASCENDING)
-                    .writeAsCsv(params.get("output"), "\n", ",")
-                    .setParallelism(1);
-            //counts.sortPartition(0, Order.ASCENDING).writeAsText("output.csv").setParallelism(1);
+            if(params.has("parallelism")){
+                int paralelism = Integer.parseInt(params.get("parallelism"));
+                log.info("Running flink using parallelism = {}", paralelism);
+                log.info("To use AUTO parallelism use value -1");
+                counts.sortPartition(0, Order.ASCENDING)
+                        .writeAsCsv(params.get("output"), "\n", ",")
+                        .setParallelism(paralelism); // Save output to the one file - paralelism default = -1 AUTO
+            }
+            else{
+                log.info("Running Flink using paralelism = 1.");
+                counts.sortPartition(0, Order.ASCENDING)
+                        .writeAsCsv(params.get("output"), "\n", ",")
+                        .setParallelism(1);
+            }
             // execute flink
             env.execute();
         } else {
-            System.out.println("Printing result to stdout. Use --output to specify output path.");
+            log.info("Printing result to stdout. Use --output to specify output path.");
             counts.print();
         }
 
@@ -67,8 +77,7 @@ public class WordCount {
         @Override
         public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
 
-            // This splits the txt file on all non word characters!
-            // "\W+"
+            // "\W+" splits the txt file on all non word characters!
             // "\\P{Alpha}+" - matches any non-alphabetic character
             String[] tokens = value.toLowerCase().split("\\P{Alpha}+");
 
