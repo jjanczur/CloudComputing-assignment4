@@ -6,26 +6,10 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
-import de.tub.cc.util.WordCountData;
+//import de.tub.cc.util.WordCountData;
 import org.apache.flink.util.Collector;
 
-/**
- * Implements the "WordCount" program that computes a simple word occurrence histogram
- * over text files.
- *
- * <p>The input is a plain text file with lines separated by newline characters.
- *
- * <p>Usage: <code>WordCount --input &lt;path&gt; --output &lt;path&gt;</code><br>
- * If no parameters are provided, the program is run with default data from {@link WordCountData}.
- *
- * <p>This example shows how to:
- * <ul>
- * <li>write a simple Flink program.
- * <li>use Tuple data types.
- * <li>write and use user-defined functions.
- * </ul>
- *
- */
+
 public class WordCount {
 
     // *************************************************************************
@@ -51,8 +35,8 @@ public class WordCount {
             // get default test text data
             System.out.println("Executing WordCount example with default input data set.");
             System.out.println("Use --input to specify file input.");
-            //return;
-            text = WordCountData.getDefaultTextLineDataSet(env);
+            return;
+            //text = WordCountData.getDefaultTextLineDataSet(env);
         }
 
         DataSet<Tuple2<String, Integer>> counts =
@@ -68,7 +52,7 @@ public class WordCount {
                     .writeAsCsv(params.get("output"), "\n", ",")
                     .setParallelism(1);
             //counts.sortPartition(0, Order.ASCENDING).writeAsText("output.csv").setParallelism(1);
-            // execute program
+            // execute flink
             env.execute();
         } else {
             System.out.println("Printing result to stdout. Use --output to specify output path.");
@@ -77,21 +61,16 @@ public class WordCount {
 
     }
 
-    // *************************************************************************
-    //     USER FUNCTIONS
-    // *************************************************************************
 
-    /**
-     * Implements the string tokenizer that splits sentences into words as a user-defined
-     * FlatMapFunction. The function takes a line (String) and splits it into
-     * multiple pairs in the form of "(word,1)" ({@code Tuple2<String, Integer>}).
-     */
     public static final class Tokenizer implements FlatMapFunction<String, Tuple2<String, Integer>> {
 
         @Override
         public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
-            // normalize and split the line
-            String[] tokens = value.toLowerCase().split("\\W+");
+
+            // This splits the txt file on all non word characters!
+            // "\W+"
+            // "\\P{Alpha}+" - matches any non-alphabetic character
+            String[] tokens = value.toLowerCase().split("\\P{Alpha}+");
 
             // emit the pairs
             for (String token : tokens) {
