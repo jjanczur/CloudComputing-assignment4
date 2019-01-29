@@ -12,15 +12,24 @@ import org.apache.flink.configuration.Configuration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class CellCluster
 {
+    private static int parallelism = 1;
+
     public static void main(String[] args) throws Exception
     {
         final ParameterTool params = ParameterTool.fromArgs(args);
+
+        // Set parallelism grade
+
+        if(params.has("parallelism"))
+        {
+            parallelism = params.getInt("parallelism");
+        }
+
 
         // Set up execution environment
 
@@ -95,7 +104,9 @@ public class CellCluster
         // Emit result
         if (params.has("output"))
         {
-            clusteredPoints.writeAsCsv(params.get("output"), "\n", ",").setParallelism(1);
+            clusteredPoints
+                    .writeAsCsv(params.get("output"), "\n", ",")
+                    .setParallelism(parallelism);
             env.execute("CellCluster Example");
         } else
             {
