@@ -9,8 +9,13 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.core.fs.FSDataOutputStream;
+import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.core.fs.Path;
 
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -102,12 +107,50 @@ public class CellCluster
 
 
         // Emit result
+
         if (params.has("output"))
         {
+            // Write content to a tmp file
+
             clusteredPoints
-                    .writeAsCsv(params.get("output"), "\n", ",")
+                    .writeAsCsv("tmp", "\n", ",", FileSystem.WriteMode.OVERWRITE)
                     .setParallelism(parallelism);
+
             env.execute("CellCluster Example");
+
+
+            File tmp = new File("tmp");
+            File output = new File(params.get("output"));
+
+
+            // Write header
+
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(output)))
+            {
+                writer.write("centroid,lon,lat\n");
+            }
+
+
+            // Copy content from the tmp file
+
+            try(
+                    InputStream in = new BufferedInputStream(new FileInputStream(tmp));
+                    OutputStream out = new BufferedOutputStream(new FileOutputStream(output, true)))
+            {
+                byte[] buffer = new byte[1024];
+                int length;
+
+                while((length = in.read(buffer)) > 0)
+                {
+                    out.write(buffer, 0, length);
+                    out.flush();
+                }
+            }
+
+
+            // Remove the tmp file
+
+            tmp.deleteOnExit();
         } else
             {
             System.out.println("Printing result to stdout. Use --output to specify output path.");
@@ -116,7 +159,7 @@ public class CellCluster
     }
 
     // *************************************************************************
-    //     DATA SOURCE READING
+    //     UTILITY FUNCTIONS
     // *************************************************************************
 
     private static DataSet<Tower> getTowers(ParameterTool params, ExecutionEnvironment env)
