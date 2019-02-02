@@ -113,44 +113,44 @@ public class CellCluster
             // Write content to a tmp file
 
             clusteredPoints
-                    .writeAsCsv("tmp", "\n", ",", FileSystem.WriteMode.OVERWRITE)
+                    .writeAsCsv(params.get("output"), "\n", ",", FileSystem.WriteMode.OVERWRITE)
                     .setParallelism(parallelism);
 
             env.execute("CellCluster Example");
 
 
-            File tmp = new File("tmp");
-            File output = new File(params.get("output"));
-
-
-            // Write header
-
-            try(BufferedWriter writer = new BufferedWriter(new FileWriter(output)))
-            {
-                writer.write("centroid,lon,lat\n");
-            }
-
-
-            // Copy content from the tmp file
-
-            try(
-                    InputStream in = new BufferedInputStream(new FileInputStream(tmp));
-                    OutputStream out = new BufferedOutputStream(new FileOutputStream(output, true)))
-            {
-                byte[] buffer = new byte[1024];
-                int length;
-
-                while((length = in.read(buffer)) > 0)
-                {
-                    out.write(buffer, 0, length);
-                    out.flush();
-                }
-            }
-
-
-            // Remove the tmp file
-
-            tmp.deleteOnExit();
+//            File tmp = new File("tmp");
+//            File output = new File(params.get("output"));
+//
+//
+//            // Write header
+//
+//            try(BufferedWriter writer = new BufferedWriter(new FileWriter(output)))
+//            {
+//                writer.write("centroid,lon,lat\n");
+//            }
+//
+//
+//            // Copy content from the tmp file
+//
+//            try(
+//                    InputStream in = new BufferedInputStream(new FileInputStream(tmp));
+//                    OutputStream out = new BufferedOutputStream(new FileOutputStream(output, true)))
+//            {
+//                byte[] buffer = new byte[1024];
+//                int length;
+//
+//                while((length = in.read(buffer)) > 0)
+//                {
+//                    out.write(buffer, 0, length);
+//                    out.flush();
+//                }
+//            }
+//
+//
+//            // Remove the tmp file
+//
+//            tmp.deleteOnExit();
         } else
             {
             System.out.println("Printing result to stdout. Use --output to specify output path.");
