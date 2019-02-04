@@ -1,4 +1,4 @@
-package de.tub.cc;
+package de.tub.cc.assignment4.task1;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.operators.Order;
@@ -47,15 +47,14 @@ public class WordCount {
 
         // emit result
         if (params.has("output")) {
-            if(params.has("parallelism")){
+            if (params.has("parallelism")) {
                 int paralelism = Integer.parseInt(params.get("parallelism"));
                 log.info("Running flink using parallelism = {}", paralelism);
                 log.info("To use AUTO parallelism use value -1");
                 counts.sortPartition(0, Order.ASCENDING)
                         .writeAsCsv(params.get("output"), "\n", ",")
                         .setParallelism(paralelism); // Save output to the one file - paralelism default = -1 AUTO
-            }
-            else{
+            } else {
                 log.info("Running Flink using paralelism = 1.");
                 counts.sortPartition(0, Order.ASCENDING)
                         .writeAsCsv(params.get("output"), "\n", ",")

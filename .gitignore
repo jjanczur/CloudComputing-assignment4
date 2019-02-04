@@ -146,4 +146,6 @@ hs_err_pid*
 /.idea/
 /assignment4.iml
 /.idea/vcs.xml
-/Task1/target/
+/task1/target/
+/task2/target/
+/venv

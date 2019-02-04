@@ -1,3 +1,5 @@
+package de.tub.cc.assignment4.task1.assignment4.task2;
+
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
@@ -116,7 +118,7 @@ public class CellCluster
                     .writeAsCsv(params.get("output"), "\n", ",", FileSystem.WriteMode.OVERWRITE)
                     .setParallelism(parallelism);
 
-            env.execute("CellCluster Example");
+            env.execute("de.tub.cc.assignment4.task2.CellCluster Example");
 
 
 //            File tmp = new File("tmp");

@@ -1,4 +1,4 @@
-package de.tub.cc.util;
+package de.tub.cc.assignment4.task1.util;
 
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
