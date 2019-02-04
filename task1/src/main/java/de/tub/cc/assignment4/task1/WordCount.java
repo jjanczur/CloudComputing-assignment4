@@ -35,7 +35,6 @@ public class WordCount {
             // get default test text data
             log.error("Use --input to specify file input.");
             return;
-            //text = WordCountData.getDefaultTextLineDataSet(env); // use provided dataset
         }
 
         DataSet<Tuple2<String, Integer>> counts =
@@ -48,12 +47,12 @@ public class WordCount {
         // emit result
         if (params.has("output")) {
             if (params.has("parallelism")) {
-                int paralelism = Integer.parseInt(params.get("parallelism"));
-                log.info("Running flink using parallelism = {}", paralelism);
+                int parallelism = Integer.parseInt(params.get("parallelism"));
+                log.info("Running flink using parallelism = {}", parallelism);
                 log.info("To use AUTO parallelism use value -1");
                 counts.sortPartition(0, Order.ASCENDING)
                         .writeAsCsv(params.get("output"), "\n", ",")
-                        .setParallelism(paralelism); // Save output to the one file - paralelism default = -1 AUTO
+                        .setParallelism(parallelism); // Save output to the one file - parallelism default = -1 AUTO
             } else {
                 log.info("Running Flink using paralelism = 1.");
                 counts.sortPartition(0, Order.ASCENDING)
