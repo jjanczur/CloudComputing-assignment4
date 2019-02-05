@@ -1,0 +1,29 @@
+aws s3api create-bucket \
+    --bucket group28-cc4 \
+    --region us-east-1
+
+aws emr create-default-roles
+
+aws emr create-cluster --name "Cluster with Flink" --release-label emr-5.20.0 \
+    --log-uri s3://group28-cc4 \
+    --applications Name=Flink --ec2-attributes KeyName=us-east \
+    --instance-type m4.large --instance-count 3 --use-default-roles \
+    --steps Type=CUSTOM_JAR,Jar=command-runner.jar,Name=Flink_Long_Running_Session,Args="flink-yarn-session -n 2 -d"
+
+# Click "Enable Web Connection" in the EMR management console and follow the presented steps
+
+# Access hadoop web console at http://ec2-3-94-170-11.compute-1.amazonaws.com:8088/cluster
+# Access flink web console at http://ip-172-31-90-21.ec2.internal:20888/proxy/application_1549395996437_0001/#/overview
+
+# Submit the new job using flink's web console with the following parameters
+
+# - for the WordCount program:
+--input s3://group28-cc4/tolstoy-war-and-peace.txt --output s3://group28-cc4/words.csv
+
+# - for the CellCluster program with berlin.csv input:
+--input s3://group28-cc4/berlin.csv --iterations 10 --mnc 1;6;78 --k 500 --output s3://group28-cc4/clusters.csv
+
+# - for the CellCluster program with germany.csv input:
+--input s3://group28-cc4/germany.csv --iterations 10 --mnc 1;6;78 --k 500 --output s3://group28-cc4/clusters.csv
+
+There are no custom configurations.json OR flink-conf.yaml files. The defaults from Amazon EMR have been used.

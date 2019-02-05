@@ -1,0 +1,62 @@
+The programs have been run on the cluster with the following parallelism options:
+
+WordCount
+parallelism=1 17s
+parallelism=2 13s
+parallelism=4 21s
+
+CellCluster (berlin)
+parallelism=1 18s
+parallelism=2 15s
+parallelism=4 26s
+
+The parallelism 2 yields the best performance. It is the sweet spot between being bounded by CPU and network. For this
+reason the next tests will be run with such parallelism.
+
+--iterations  10 --mnc 1;6;78 --k 500 => 15s
+--iterations 100 --mnc 1;6;78 --k 500 => 33s
+--iterations 666 --mnc 1;6;78 --k 500 => 2m 13s
+
+--iterations 100 --mnc 1;6;78 --k  100 => 30s
+--iterations 100 --mnc 1;6;78 --k  500 => 33s
+--iterations 100 --mnc 1;6;78 --k 1000 => 37s
+
+# Shuffle the berlin.csv file to obtain different initial placement
+cat berlin.csv | head -n 1 > ./berlin2.csv
+cat berlin.csv | tail -n+2 | shuf >> ./berlin2.csv
+
+--input s3://group28-cc4/berlin2.csv --iterations 100 --mnc 1;6;78 --k  500 => 35s
+
+Shuffling the lines doesn't affect the performance.
+
+Answer the following questions separately for both programs:
+
+- Which steps in your program require communication and synchronization
+between your workers?
+
+WordCount:
+Data sink requires synchronisation - it happens on one worker. Communication happens between
+GroupCombine and GroupReduce steps, and also between Sort-Partition and Data Sink.
+
+CellCluster:
+Synchronisation happens when writing to file, and in GroupReduce steps since it has to find the first centroid.
+Communication happens between all steps.
+
+- What resources are your programs bound by? Memory? CPU? Network? Disk?
+
+WordCount:
+With the optimal parallelism of 2, the step that took the longest was reading from the S3 bucket, which implies that
+the application is network-bound.
+
+CellCluster:
+In this case reading from the source took less time than the further processing. Therefore the program is CPU-bound.
+
+- Could you improve the partitioning of your data to yield better run-time?
+
+WordCount:
+Selecting bigger parallelism than 2 yielded worse results. Possible gains coming from reading file by more workers is
+suppressed by the overhead of communication between them.
+
+CellCluster:
+In this case increasing parallelism also didn't improve the running-time. It only caused the program to be network-bound
+instead of CPU-bound.
