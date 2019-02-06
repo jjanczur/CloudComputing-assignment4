@@ -1,0 +1,24 @@
+--input s3://tub-cc-assignment4-flink/tolstoy-war-and-peace.txt --output s3://tub-cc-assignment4-flink/wordcount.csv
+parallelism=1 11s
+parallelism=2 15s
+parallelism=4 14s
+parallelism=5 9s
+parallelism=8 15s
+
+
+--input s3://tub-cc-assignment4-flink/berlin.csv --iterations 100 --mnc 1;6;78 --k 500 --output s3://tub-cc-assignment4-flink/berlinClusters.csv
+
+parallelism=1 38s
+parallelism=2 28s
+parallelism=4 45s
+parallelism=5 30s
+parallelism=8 37s
+
+
+--input s3://tub-cc-assignment4-flink/germany.csv --iterations 100 --mnc 1;6;78 --k 500 --output s3://tub-cc-assignment4-flink/clusters.csv
+
+parallelism=1 4m17s
+parallelism=2 2m55s
+parallelism=4 1m47s
+parallelism=5 1m40s
+parallelism=8 2m17s
