@@ -86,3 +86,4 @@ Answers are based the flink web console
 
 #CellCluster.java
 	No. Increasing parallelism resulted in worse runtime. It also made the program network bonded instead of CPU.
+	Another way in which we that could achieve better runtime might be increasing input file - berlin to germany and then increasing parallelism. We conducted such experiment and the results are similar to the expected.
