@@ -1,14 +1,61 @@
 discussion.txt
 
 Run your programs with different job configurations:
-- Different numbers of iterations or clusters for k-means
-- Different initial placements
+Two worker nodes
+#WordCount
+Parallelism; execution time [s]
+1;18
+2;11
+4;22
 
-Write a few sentences in the file discussion.txt about the configurations you have tried and what you have observed regarding the run time and results of the jobs.
+#CellCluster (berlin)
+Parallelism; execution time [s]
+1;18
+2;11
+4;22
+
+Parallelism set to 2 performed the best. 
+That is why the following tests are going to be conducted using parallelism set ot 2.
+
+--iterations  10 --mnc 1;6;78 --k 500 #  execution time [s]: 14
+--iterations 100 --mnc 1;6;78 --k 500 #  execution time [s]: 36
+--iterations 500 --mnc 1;6;78 --k 500 #  execution time [s]: 99
+
+--iterations 100 --mnc 1;6;78 --k  100 #  execution time [s]: 31
+--iterations 100 --mnc 1;6;78 --k  500 #  execution time [s]: 34
+--iterations 100 --mnc 1;6;78 --k 1000 #  execution time [s]: 38
+
+We obtained different initial placement by shuffling the input
+(head -n 1 ./berlin.csv && tail -n +2 berlin.csv  | shuf) > ./berlin2.csv
+
+--input s3://tub-cc-assignment4-flink/berlin2.csv --iterations 100 --mnc 1;6;78 --k  500 # execution time [s]: 36
+
+Program performed similar with shuffled input.
 
 Answer the following questions separately for both programs:
 1. Which steps in your program require communication and synchronization between your workers?
 
+Answers are based the flink web console
+#WordCount.java
+	Communication: between GroupCombine - GroupReduce, Sort-Partition - Data Sink.
+	Synchronisation: is required while we are receiving the data. One Worker synchronization.
+
+#CellCluster.java
+	Communication: all steps
+	Synchronisation: writing the output, while finding the first centroid in GroupReduce
+
 2. What resources are your programs bound by? Memory? CPU? Network? Disk?
 
+#WordCount.java
+	Network - reading data from s3 bucket is the longest execution step in an optimal parallelism mode (2). It goes through the network. 
+
+#CellCluster.java 
+	CPU - in contrast to WordCount reading data from s3 bucket was the shortest execution part that is why we assume that in this case the program is bounded on CPU.
+
 3. Could you improve the partitioning of your data to yield better run-time?
+
+#WordCount.java
+	No. Increasing parallelism resulted in worse runtime. Program is network bonded and parallelization in data reading by multiple workers won't help either due to communication overhead.
+
+#CellCluster.java
+	No. Increasing parallelism resulted in worse runtime. It also made the program network bonded instead of CPU.
