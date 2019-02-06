@@ -1,7 +1,7 @@
 discussion.txt
 
 Run your programs with different job configurations:
-Two worker nodes
+2 worker nodes:
 #WordCount
 
 Parallelism: 1 -> execution time: 8
@@ -106,5 +106,5 @@ Answers are based the flink web console
 	No. Increasing parallelism resulted in worse runtime. Program is network bonded and parallelization in data reading by multiple workers won't help either due to communication overhead.
 
 #CellCluster.java
-	No. Increasing parallelism resulted in worse runtime. It also made the program network bonded instead of CPU.
+	No. Increasing parallelism resulted in worse runtime. It also made the program network bounded instead of CPU.
 	Another way in which we that could achieve better runtime might be increasing input file - berlin to germany and then increasing parallelism. We conducted such experiment and the results are similar to the expected.
