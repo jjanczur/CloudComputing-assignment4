@@ -4,60 +4,81 @@ Run your programs with different job configurations:
 Two worker nodes
 #WordCount
 
-parallelism=1; execution time1 8
-parallelism=2; execution time 11
-parallelism=4; execution time 22
+Parallelism: 1 -> execution time: 8
+Parallelism: 2 -> execution time: 11
+Parallelism: 4 -> execution time: 22
 
 #CellCluster (berlin)
 
-parallelism=1; execution time18
-parallelism=2; execution time11
-parallelism=4; execution time22
+Parallelism: 1 -> execution time: 18
+Parallelism: 2 -> execution time: 11
+Parallelism: 4 -> execution time: 22
+
 
 Parallelism set to 2 performed the best. 
 That is why the following tests are going to be conducted using parallelism set ot 2.
 
---iterations  10 --mnc 1;6;78 --k 500 #  execution time 14
---iterations 100 --mnc 1;6;78 --k 500 #  execution time 36
---iterations 500 --mnc 1;6;78 --k 500 #  execution time 99
+Iterations: 10
+MNC: 1;3;6
+K: 500
+---
+Result: 14
 
---iterations 100 --mnc 1;6;78 --k  100 #  execution time [s]: 31
---iterations 100 --mnc 1;6;78 --k  500 #  execution time [s]: 34
---iterations 100 --mnc 1;6;78 --k 1000 #  execution time [s]: 38
+Iterations: 100
+MNC: 1;3;6
+K: 500
+---
+Result: 36
 
-We obtained different initial placement by shuffling the input
-(head -n 1 ./berlin.csv && tail -n +2 berlin.csv  | shuf) > ./berlin2.csv
+Iterations: 500
+MNC: 1;3;6
+K: 500
+---
+Result: 99
 
---input s3://tub-cc-assignment4-flink/berlin2.csv --iterations 100 --mnc 1;6;78 --k  500 # execution time 36s
+Iterations: 100
+MNC: 1;3;6
+K: 100
+---
+Result: 31
 
-Program performed similar with shuffled input.
+Iterations: 100
+MNC: 1;3;6
+K: 500
+---
+Result: 34
+
+Iterations: 100
+MNC: 1;3;6
+K: 1000
+---
+Result: 38
+
 
 5 worker nodes:
 
 --input s3://tub-cc-assignment4-flink/tolstoy-war-and-peace.txt --output s3://tub-cc-assignment4-flink/wordcount.csv
-parallelism=1 execution time 11s
-parallelism=2 execution time 15s
-parallelism=4 execution time 14s
-parallelism=5 execution time 9s
-parallelism=8 execution time 15s
+Parallelism: 1 -> execution time: 11s
+Parallelism: 2 -> execution time: 15s
+Parallelism: 4 -> execution time: 14s
+Parallelism: 5 -> execution time: 9s
+Parallelism: 8 -> execution time: 15s
 
 
---input s3://tub-cc-assignment4-flink/berlin.csv --iterations 100 --mnc 1;6;78 --k 500 --output s3://tub-cc-assignment4-flink/berlinClusters.csv
+--input s3://tub-cc-assignment4-flink/berlin.csv --iterations 100 --mnc 1;3;6 --k 500 --output s3://tub-cc-assignment4-flink/berlinClusters.csv
+Parallelism: 1 -> execution time: 38s
+Parallelism: 2 -> execution time: 28s
+Parallelism: 4 -> execution time: 45s
+Parallelism: 5 -> execution time: 30s
+Parallelism: 8 -> execution time: 37s
 
-parallelism=1 execution time 38s
-parallelism=2 execution time 28s
-parallelism=4 execution time 45s
-parallelism=5 execution time 30s
-parallelism=8 execution time 37s
 
-
---input s3://tub-cc-assignment4-flink/germany.csv --iterations 100 --mnc 1;6;78 --k 500 --output s3://tub-cc-assignment4-flink/clusters.csv
-
-parallelism=1 execution time 4m17s
-parallelism=2 execution time 2m55s
-parallelism=4 execution time 1m47s
-parallelism=5 execution time 1m40s
-parallelism=8 execution time 2m17s
+--input s3://tub-cc-assignment4-flink/germany.csv --iterations 100 --mnc 1;3;6 --k 500 --output s3://tub-cc-assignment4-flink/clusters.csv
+Parallelism: 1 -> execution time: 4m17s
+Parallelism: 2 -> execution time: 2m55s
+Parallelism: 4 -> execution time: 1m47s
+Parallelism: 5 -> execution time: 1m40s
+Parallelism: 8 -> execution time: 2m17s
 
 Answer the following questions separately for both programs:
 1. Which steps in your program require communication and synchronization between your workers?
