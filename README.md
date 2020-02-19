@@ -29,39 +29,39 @@ Parallelism set to 2 performed the best.
 That is why the following tests are going to be conducted using parallelism set ot 2.   
 
 Iterations: 10   
-MNC: 1;3;6   
-K: 500   
----   
+MNC: 1;3;6  
+K: 500  
+
 Result: 14   
 
 Iterations: 100   
 MNC: 1;3;6   
 K: 500   
----   
+
 Result: 36   
 
 Iterations: 500   
 MNC: 1;3;6   
 K: 500   
----   
+
 Result: 99   
 
 Iterations: 100   
 MNC: 1;3;6   
 K: 100   
----   
+
 Result: 31   
 
 Iterations: 100   
 MNC: 1;3;6   
 K: 500   
----   
+
 Result: 34   
 
 Iterations: 100   
-MNC: 1;3;6   
-K: 1000   
----   
+MNC: 1;3;6
+K: 1000
+
 Result: 38   
 
 
