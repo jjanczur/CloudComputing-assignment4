@@ -121,3 +121,44 @@ WordCount.java
 #CellCluster.java   
 	No. Increasing parallelism resulted in worse runtime. It also made the program network bonded instead of CPU.   
 	Another way in which we that could achieve better runtime might be increasing input file - berlin to germany and then increasing parallelism. We conducted such experiment and the results are similar to the expected.
+	
+# Setup
+
+
+listing.txt
+
+```shell
+aws s3api create-bucket \
+    --bucket tub-cc-assignment4-flink \
+    --region us-east-1
+
+aws emr create-default-roles
+```
+
+#ubuntu_key was created in previous assignment
+```shell
+aws emr create-cluster --name "Cluster with Flink" --release-label emr-5.20.0 \
+    --log-uri s3://tub-cc-assignment4-flink/ \
+    --applications Name=Flink --ec2-attributes KeyName=ubuntu_key \
+    --instance-type m4.large --instance-count 3 --use-default-roles \
+    --steps Type=CUSTOM_JAR,Jar=command-runner.jar,Name=Flink_Long_Running_Session,Args="flink-yarn-session -n 2 -d"
+```
+
+#Go through "Enable Web Connection" steps
+
+#Hadoop web console at http://ec2-54-145-55-80.compute-1.amazonaws.com:8088/cluster   
+#Flink web console at http://ip-172-31-36-21.ec2.internal:20888/proxy/application_1524164137528_0001/#/overview   
+
+#Flink jobs:   
+
+#WordCount.java   
+`--input s3://tub-cc-assignment4-flink/tolstoy-war-and-peace.txt --output s3://tub-cc-assignment4-flink/wordcount.csv`
+
+
+#CellCluster.java berlin.csv   
+`--input s3://tub-cc-assignment4-flink/berlin.csv --iterations 100 --mnc 1;6;78 --k 500 --output s3://tub-cc-assignment4-flink/berlinClusters.csv`
+
+#CellCluster.java germany.csv   
+`--input s3://tub-cc-assignment4-flink/germany.csv --iterations 100 --mnc 1;6;78 --k 500 --output s3://tub-cc-assignment4-flink/clusters.csv`
+
+To setup Flink on EMR no additional files were needed.
