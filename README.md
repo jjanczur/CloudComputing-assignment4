@@ -5,6 +5,9 @@ This is the repo imported from TU Berlin GitLab with the code for the assignment
 We got **maximum number of points**, so enjoy our work.    
 If you find it useful, you can give us a star.
 
+## Task
+
+The task was to use flink and implement a few paralel computing algorithms. We as well measurred influence of parallelism to the execution time.
 
 # discussion.txt
 
